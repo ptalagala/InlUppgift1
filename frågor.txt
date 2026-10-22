@@ -1,0 +1,161 @@
+1. Vad är pull respektive push?
+Pull används när man vill hämta ändringar från en remote branch och integrera de i lokala branchen.
+Push används när man vill skicka lokala ändringar till en remote repository.
+
+2. När använder man log respektive status?
+Log används när man vill titta på commit historiken.
+Status används när man vill ta reda på vilken plats (stage) filerna ligger. 
+Till exempel om filerna behövs committa eller om de är i staging eller inte.
+
+
+3. Vad är en Git branch och varför är de viktiga?
+Git branch är en separat utvecklingslinje som skiljer sig från main/master branchen.
+Branch är viktigt eftersom det hjälper till att få ordning när man arbetar med olika funktioner i samma projekt.
+eller särskilt när man arbetar med andra utvecklare i samma projekt.
+
+4. Det finns flera sätt att rulla tillbaka koden till ett tidigare tillstånd. 
+Förklara skillnaden och motivera när man skulle använda den ena eller andra metoden. 
+Ge exempel på de kommandon du använder för att göra detta och vissa att det fungerar, vilken output du fick från git-kommandona.
+
+git restore - används för att återställa en fil till en tidigare version. 
+Det är bara fil i working directory som är påverkad av den kommandon.
+git restore är lämpligt att använda när man vill ångra en fil antingen i working director eller staging.
+exempel: 
+$ cat > README.md 
+Read me first  
+
+$ git status
+On branch test-branch
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	README.md
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+$ git add README.md 
+
+$ git commit -m "adding readme.md"
+[test-branch 459e48a] adding readme.md
+ 1 file changed, 1 insertion(+)
+ create mode 100644 README.md
+
+$ cat >> README.md 
+Read me second
+
+$ git status
+On branch test-branch
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   README.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+$ cat README.md 
+Read me first
+Read me second
+
+$ git restore README.md 
+
+$ cat README.md 
+Read me first
+$ 
+
+
+git reset - flyttar commit historiken till en tidigare tillstånd. Det finns 3 olika flaggor som kallas för soft, mixed och hard.
+Commit historiken påverkas när man använder alla 3 flaggor. 
+Soft - behåller ändringar i stagin area och i working directory.
+mixed - behåller ändringar bara i working directory.
+hard - alla ändringar i stagin och working area påverkas. 
+Den ska ta bort alla nuvarande ändringar och istället ha de ändringar från tidigare committen.
+
+git reset bör användas försiktigt och när man verkligen behöver börja om från ändringar i sista committen.
+Det är bättre att använda git reset --hard bara när man arbetar ensam i ett projekt.
+
+exempel:
+$ cat >> README.md 
+Read me now!
+
+$ cat README.md 
+Read me first
+Read me now!
+
+$ git status
+On branch test-branch
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   README.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+$ git commit -am "update readme.md"
+[test-branch 1626214] update readme.md
+ 1 file changed, 1 insertion(+)
+
+$ git status
+On branch test-branch
+nothing to commit, working tree clean
+
+$ cat README.md 
+Read me first
+Read me now!
+
+$ git log --oneline
+1626214 (HEAD -> test-branch) update readme.md
+459e48a adding readme.md
+
+$ git reset --hard HEAD~1
+HEAD is now at 459e48a adding readme.md
+
+$ cat README.md 
+Read me first
+
+$ git log --oneline
+459e48a (HEAD -> test-branch) adding readme.md
+$ 
+
+
+git revert - används för att gå tillbaka till en tidigare commit men på det här fallet commit historiken behållas.
+Git revert skapar en ny commit samma som den tidigare commiten man vill gå tillbaka till. 
+Det är bättre att använda Git revert när man arbeterar i ett group eller team i ett projekt. 
+Då kan alla andra utvecklare veta om vad som hände i utvecklings historiken.
+
+exempel:
+
+$ cat >> README.md 
+Read me next
+
+$ git status
+On branch test-branch
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   README.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+$ cat README.md 
+Read me first
+Read me next
+
+$ git commit -am "add second line to readme.md"
+[test-branch 81d5cc8] add second line to readme.md
+ 1 file changed, 1 insertion(+)
+
+$ git log --oneline
+81d5cc8 (HEAD -> test-branch) add second line to readme.md
+459e48a adding readme.md
+
+$ git revert 81d5cc8
+[test-branch fdf5eb4] Revert "add second line to readme.md"
+ 1 file changed, 1 deletion(-)
+
+$ cat README.md 
+Read me first
+
+$ git log --oneline
+fdf5eb4 (HEAD -> test-branch) Revert "add second line to readme.md"
+81d5cc8 add second line to readme.md
+459e48a adding readme.md
+$ 
