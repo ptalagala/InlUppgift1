@@ -1,3 +1,6 @@
+Jag siktar på VG.
+
+
 1. Vad är pull respektive push?
 Pull används när man vill hämta ändringar från en remote branch och integrera de i lokala branchen.
 Push används när man vill skicka lokala ändringar till en remote repository.
@@ -159,3 +162,29 @@ fdf5eb4 (HEAD -> test-branch) Revert "add second line to readme.md"
 81d5cc8 add second line to readme.md
 459e48a adding readme.md
 $ 
+
+
+VG Delen:
+
+1. Beskriv och jämför hur man kan använda git rebase och git merge i ett
+scenario där flera utvecklare jobbar på olika feature branches.
+
+Git merge används för att sammanfoga olika delar i projekt till ett.
+Ett exempel scenario:
+En utvecklings team som har har fått ett krav för att bygga en webbsida. Och en function som "Login" är delas med 3 utvecklare. En som är ansvarig för "User Creation" delen och den andra som är ansvarig för "Login Validation" delen och en annan som är ansvarig för "Forgot Password" delen.
+De gör sin utveckling på sin egen branch och sen efter "Login" och "Forgot Password" delarna är färdig måste de sammanfoga de delarna med "User Creation" delen. Då används git merge.
+
+Git rebase används också för att integrera ändringar från en branch till en annan men den kan användas för att ha en linjär utvecklings historik.
+Ett exempel scenario:
+Jag bygger på exempel ovanför. Efter att ha gjort merge arbetar en utvecklare på en bugg i första delen - "User Creation". Efter den är färdig kan man använda git rebase i sin branch för att inkludera buggfixen med hela "Login" function.
+
+2. Diskutera fördelarna och nackdelarna med båda teknikerna, samt hur de
+påverkar historiken.
+Git merge bevarar hela den faktiska historiken som den skedde medan git rebase skriver om commit historiken för att skapa en linjär historik.
+
+En fördel med git merge är att historiken ändras inte och det visar hur koden integrerade.
+Däremot en nackdel med merge är att historiken kan bli svårt att följa som en linjär.
+Medan är det lättare att följa historiken med git rebase.
+Den rekommenderade sätt att använda dem är genom att använda git rebase bara i sin egen branch och att använda alltid git merge med delade branch. 
+
+
